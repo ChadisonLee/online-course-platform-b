@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: course_platform_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_here
+      MYSQL_DATABASE: course_platform
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      # 挂载初始化脚本，MySQL容器首次启动时自动执行
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      - ../database/data.sql:/docker-entrypoint-initdb.d/data.sql:ro
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: course_platform_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/course_platform?useSSL=false&serverTimezone=UTC&characterEncoding=utf8mb4
+      SPRING_DATASOURCE_USERNAME: app_user
+      SPRING_DATASOURCE_PASSWORD: app_password
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

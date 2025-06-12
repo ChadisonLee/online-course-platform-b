@@ -1,0 +1,11 @@
+# 以 JDK 17 Alpine 版本作为基础镜像
+FROM eclipse-temurin:17-jdk-alpine
+
+WORKDIR /app
+
+# 复制构建好的后端jar包
+COPY target/backend.jar ./backend.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "backend.jar"]
