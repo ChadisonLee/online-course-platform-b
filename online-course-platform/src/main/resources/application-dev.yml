@@ -13,7 +13,7 @@ spring:
         format_sql: true
 
 server:
-  port: 3306
+  port: 8080
 
 jwt:
   secretKey: "dev-very-long-secret-key-string-at-least-32-chars!"

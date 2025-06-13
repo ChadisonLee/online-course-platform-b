@@ -13,7 +13,7 @@ spring:
         format_sql: false
 
 server:
-  port: 3306
+  port: 8080
 
 jwt:
   secretKey: "prod-very-long-secret-key-string-at-least-32-chars-secure!"  # 请使用安全随机生成的密钥

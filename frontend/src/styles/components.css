@@ -1,0 +1,111 @@
+/* components.css */
+
+/* Header */
+header {
+    background-color: #282c34;
+    color: #fff;
+    padding: 1rem;
+}
+
+header a {
+    color: #61dafb;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+header nav a {
+    margin-left: 1rem;
+    color: #fff;
+}
+
+header nav a:hover {
+    color: #40a9ff;
+}
+
+/* Sidebar */
+aside {
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    height: 100%;
+    padding: 1rem;
+}
+
+aside ul {
+    list-style: none;
+}
+
+aside ul li {
+    margin-bottom: 1rem;
+}
+
+aside ul li a {
+    color: #333;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+aside ul li a.active,
+aside ul li a:hover {
+    color: #1890ff;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    background-color: #282c34;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+/* Course Card */
+.course-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.course-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.course-card p {
+    margin-bottom: 1rem;
+}
+
+/* Forms */
+form label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+form input,
+form select,
+form textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Loading Spinner */
+.spinner {
+    margin: 0 auto;
+    width: 40px;
+    height: 40px;
+    border: 5px solid lightgray;
+    border-top-color: #61dafb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
