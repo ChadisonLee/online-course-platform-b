@@ -1,15 +1,15 @@
 import React from 'react';
-import CourseCard from './CourseCard';
+import CourseCard from './UserCard';
 
-export default function CourseList({ courses }) {
-    if (!courses || courses.length === 0) {
-        return <p style={styles.emptyText}>No courses available.</p>;
+export default function UserList({ users }) {
+    if (!users || users.length === 0) {
+        return <p style={styles.emptyText}>No users available.</p>;
     }
 
     return (
         <div style={styles.gridContainer}>
-            {courses.map(course => (
-                <CourseCard key={course.id} course={course} />
+            {users.map(users => (
+                <CourseCard key={users.id} users={users} />
             ))}
         </div>
     );

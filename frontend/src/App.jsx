@@ -5,7 +5,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 import Header from './components/common/Header';
-import Footer from './components/common/Footer';
 import Sidebar from './components/common/Sidebar';
 
 import Login from './pages/auth/Login';
@@ -51,7 +50,6 @@ function App() {
                             </Routes>
                         </main>
                     </div>
-                    <Footer />
                 </Router>
             </ThemeProvider>
         </AuthProvider>

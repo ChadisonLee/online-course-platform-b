@@ -16,7 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // 允许的域名，生产环境请改成你前端地址
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://your-frontend-domain.com"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://172.26.240.1:3000"));
 
         // 允许的请求头
         config.setAllowedHeaders(List.of("*"));

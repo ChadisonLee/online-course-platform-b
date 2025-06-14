@@ -34,7 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                logger.info("JWT验证通过");
                 String username = tokenProvider.getUsernameFromJWT(jwt);
+                logger.info("从JWT中解析出的用户名：" + username);
 
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication =
@@ -48,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            logger.error("无法设置用户认证: {}");
+            logger.error("无法设置用户认证", ex);
         }
 
         filterChain.doFilter(request, response);

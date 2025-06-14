@@ -5,19 +5,24 @@ INSERT INTO users (username, password, email, role)
 VALUES
     ('admin',
         -- 密码是 "admin123"，用 bcrypt 加密后的示例（请根据项目实际加密替换）
-     '$2a$10$Dow1UJlYcH.MxY59EiQWbO1Xh0/e3nO9hRU8F4JkZ5Kz7q9Hkfl0i',
+     '$2a$10$dKsstaZxsgzGIvjCbMIetOuMCPAY0jk7HorobCSsTb7WV21mrFMEu',
      'admin@example.com',
      'ROLE_ADMIN');
-
--- 插入默认课程分类
-INSERT INTO categories (name) VALUES ('Java'), ('Python'), ('前端开发'), ('数据库');
+-- 插入示例分类
+INSERT INTO categories (name) VALUES
+                                  ('Programming'),
+                                  ('Design'),
+                                  ('Marketing');
 
 -- 插入示例课程
 INSERT INTO courses (title, description, category_id) VALUES
-                                                          ('Java基础课程', 'Java从入门到精通', (SELECT id FROM categories WHERE name='Java' LIMIT 1)),
-                                                          ('Python高级课程', 'Python数据分析与机器学习', (SELECT id FROM categories WHERE name='Python' LIMIT 1));
+                                                          ('Java Basics', 'Learn the basics of Java programming.', 1),
+                                                          ('Advanced CSS', 'Master CSS for responsive web design.', 2),
+                                                          ('Digital Marketing 101', 'Introduction to digital marketing strategies.', 3);
 
 -- 插入示例视频
 INSERT INTO videos (title, url, course_id) VALUES
-                                               ('Java入门视频1', 'http://example.com/videos/java1.mp4', (SELECT id FROM courses WHERE title='Java基础课程' LIMIT 1)),
-                                               ('Python数据分析视频1', 'http://example.com/videos/python1.mp4', (SELECT id FROM courses WHERE title='Python高级课程' LIMIT 1));
+                                               ('Java Introduction', 'https://example.com/videos/java_intro.mp4', 1),
+                                               ('Java Variables', 'https://example.com/videos/java_variables.mp4', 1),
+                                               ('CSS Grid Layout', 'https://example.com/videos/css_grid.mp4', 2),
+                                               ('Marketing Fundamentals', 'https://example.com/videos/marketing_fundamentals.mp4', 3);

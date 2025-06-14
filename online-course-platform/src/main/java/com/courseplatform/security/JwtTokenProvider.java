@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtTokenProvider {
@@ -17,6 +19,8 @@ public class JwtTokenProvider {
     private JwtConfig jwtConfig;
 
     private Key key;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @PostConstruct
     public void init() {
@@ -57,6 +61,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            logger.debug("JWT有效");
             return true;
         } catch (SecurityException | MalformedJwtException ex) {
             System.out.println("无效的JWT签名");
