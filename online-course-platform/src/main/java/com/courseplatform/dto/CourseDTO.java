@@ -3,6 +3,9 @@ package com.courseplatform.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+import java.util.Map;
+
 public class CourseDTO {
 
     private Long id;
@@ -14,6 +17,8 @@ public class CourseDTO {
 
     @NotNull(message = "课程分类ID不能为空")
     private Long categoryId;
+
+    private String categoryName;
 
     // 其他字段，如价格、讲师等可以根据需求添加
 
@@ -49,5 +54,23 @@ public class CourseDTO {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    private List<Map<String, Object>> video;
+
+    public List<Map<String, Object>> getVideo() {
+        return video;
+    }
+
+    public void setVideo(List<Map<String, Object>> video) {
+        this.video = video;
     }
 }

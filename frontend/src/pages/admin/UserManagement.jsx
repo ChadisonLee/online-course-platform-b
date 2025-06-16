@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Loading from "../../components/common/Loading";
 import adminService from "../../services/adminService";
 import UserList from "../../components/admin/user/UserList";
 
 export default function UserManagement() {
-
-    const [users, viewusers] = useState(null);
+    const navigate = useNavigate();
+    const [users, setUsers] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         adminService.getAllUsers()
-            .then(data => viewusers(data))
+            .then(data => setUsers(data))
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
@@ -18,18 +19,31 @@ export default function UserManagement() {
     if (loading) return <Loading />;
 
     return (
-        <div style={styles.pageContainer}>
-            <h1 style={styles.title}>User Management</h1>
-            <p style={styles.description}>Here you can manage users.</p>
-            <div>
-                {users && users.length > 0 ? (
-                    <UserList users={users} />
-                ) : (
-                    <p style={styles.emptyText}>暂无用户，请添加！</p>
-                )}
-            </div>
+        <>
+            {/* 返回按钮固定在左上角，页面内容外部 */}
+            <button
+                style={styles.backButton}
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2a75d8'}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#357ae8'}
+            >
+                ← Back
+            </button>
 
-        </div>
+            <div style={styles.pageContainer}>
+                <h1 style={styles.title}>User Management</h1>
+                <p style={styles.description}>Here you can manage users.</p>
+                <div>
+                    {users && users.length > 0 ? (
+                        <UserList users={users} />
+                    ) : (
+                        <p style={styles.emptyText}>暂无用户，请添加！</p>
+                    )}
+                </div>
+
+            </div>
+        </>
     );
 }
 

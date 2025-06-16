@@ -25,7 +25,7 @@ public class Course {
 
     // 课程与视频，一对多关系
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Video> videos = new HashSet<>();
+    private Set<Video> video = new HashSet<>();
 
     // 课程与报名，一对多关系
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,12 +65,12 @@ public class Course {
         this.category = category;
     }
 
-    public Set<Video> getVideos() {
-        return videos;
+    public Set<Video> getVideo() {
+        return video;
     }
 
-    public void setVideos(Set<Video> videos) {
-        this.videos = videos;
+    public void setVideo(Set<Video> video) {
+        this.video = video;
     }
 
     public Set<Enrollment> getEnrollments() {

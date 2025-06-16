@@ -10,11 +10,11 @@ export default function CourseCard({ course }) {
         padding: '1.5rem',
         boxShadow: hover
             ? `0 12px 20px rgba(0,0,0,0.25),
-         0 24px 48px rgba(0,0,0,0.15),
-         0 36px 72px rgba(0,0,0,0.1)`
+               0 24px 48px rgba(0,0,0,0.15),
+               0 36px 72px rgba(0,0,0,0.1)`
             : '0 4px 12px rgba(0,0,0,0.1)',
         transform: hover
-            ? 'perspective(700px) translateZ(30px) rotateX(10deg) rotateY(10deg) translateY(-20px)'
+            ? 'translateY(-20px)'  // 仅平移悬浮效果，去掉3D旋转
             : 'none',
         transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease',
         cursor: 'pointer',
@@ -24,7 +24,6 @@ export default function CourseCard({ course }) {
         minHeight: 200,
         userSelect: 'none',
         willChange: 'transform, box-shadow',
-        // subtle border gradient for edge highlight
         border: '1px solid rgba(255, 255, 255, 0.6)',
         background: hover
             ? 'linear-gradient(145deg, #ffffff, #e6e6e6)'

@@ -15,30 +15,53 @@ export default function Sidebar() {
     return (
         <aside
             style={{
-                width: 200,
-                background: '#f7f7f7',
-                padding: '1rem',
-                borderRight: '1px solid #ddd',
-                height: 'calc(100vh - 120px)',
+                width: 220,
+                background: '#20232a',
+                padding: '2rem 1.5rem',
+                borderRight: '1px solid #282c34',
+                height: 'calc(100vh - 75px)',
                 boxSizing: 'border-box',
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
             }}
+            aria-label="Sidebar navigation"
         >
             <nav>
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {navItems.map(({ path, label }) => (
-                        <li key={path} style={{ marginBottom: '1rem' }}>
-                            <Link
-                                to={path}
-                                style={{
-                                    color: location.pathname === path ? '#61dafb' : '#333',
-                                    fontWeight: location.pathname === path ? 'bold' : 'normal',
-                                    textDecoration: 'none',
-                                }}
-                            >
-                                {label}
-                            </Link>
-                        </li>
-                    ))}
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {navItems.map(({ path, label }) => {
+                        const isActive = location.pathname === path;
+                        return (
+                            <li key={path} style={{ marginBottom: '1.25rem' }}>
+                                <Link
+                                    to={path}
+                                    style={{
+                                        display: 'block',
+                                        padding: '10px 14px',
+                                        borderRadius: 8,
+                                        color: isActive ? '#61dafb' : '#bbb',
+                                        fontWeight: isActive ? '700' : '500',
+                                        backgroundColor: isActive ? 'rgba(97, 218, 251, 0.15)' : 'transparent',
+                                        textDecoration: 'none',
+                                        transition: 'background-color 0.3s ease, color 0.3s ease',
+                                        userSelect: 'none',
+                                    }}
+                                    aria-current={isActive ? 'page' : undefined}
+                                    onMouseEnter={e => {
+                                        if (!isActive) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                        if (!isActive) e.currentTarget.style.color = '#eee';
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
+                                        if (!isActive) e.currentTarget.style.color = '#bbb';
+                                    }}
+                                >
+                                    {label}
+                                </Link>
+                            </li>
+                        );
+                    })}
                 </ul>
             </nav>
         </aside>

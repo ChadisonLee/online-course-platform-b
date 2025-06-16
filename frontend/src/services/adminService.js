@@ -1,25 +1,49 @@
+// src/services/adminService.js
 import axios from 'axios';
+import api from "./api";
 
-const BASE_URL = '/api/admin';
+// 这里写后端接口基础地址，方便切换
+const adminApi = axios.create({
+    baseURL: 'http://localhost:8080/api/admin', // 请根据后端实际地址修改
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
+const TOKEN_KEY = 'token';
+
+// 请求拦截器（保留之前添加的JWT Token逻辑）
+adminApi.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 export function getAllUsers() {
-    return axios.get(`${BASE_URL}/users`).then(res => res.data);
+    return adminApi.get('/users').then(res => res.data);
 }
 
 export function deleteUser(userId) {
-    return axios.delete(`${BASE_URL}/users/${userId}`);
+    return adminApi.delete(`/users/${userId}`);
 }
 
 export function getAllCourses() {
-    return axios.get(`${BASE_URL}/courses`).then(res => res.data);
+    return adminApi.get('/courses').then(res => res.data);
 }
 
 export function deleteCourse(courseId) {
-    return axios.delete(`${BASE_URL}/courses/${courseId}`);
+    return adminApi.delete(`/courses/${courseId}`);
 }
 
 export function createCourse(courseDTO) {
-    return axios.post(`${BASE_URL}/courses`, courseDTO).then(res => res.data);
+    return adminApi.post('/courses', courseDTO).then(res => res.data);
 }
 
 // 统一导出，方便整体导入

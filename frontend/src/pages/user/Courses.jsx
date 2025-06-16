@@ -33,7 +33,7 @@ export default function Courses() {
 const styles = {
     pageContainer: {
         maxWidth: 1200,
-        margin: '40px auto',
+        margin: '30px auto',
         padding: '30px 24px',
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
         color: '#2c3e50',

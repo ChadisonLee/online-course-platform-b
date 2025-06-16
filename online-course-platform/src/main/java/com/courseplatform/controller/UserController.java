@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,14 +26,6 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    /**
-     * 获取所有用户（管理员权限）
-     */
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
 
     /**
      * 根据ID获取用户信息

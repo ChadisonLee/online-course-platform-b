@@ -24,24 +24,24 @@ export default function UserCard({ user, onDelete }) {
         fontSize: '1.3rem',
         fontWeight: '700',
         color: '#2c3e50',
-        marginBottom: 8,
+        marginBottom: 6,
     };
 
     const emailStyle = {
-        fontSize: '1rem',
+        fontSize: '0.95rem',
         color: '#555',
-        marginBottom: 12,
+        marginBottom: 6,
         wordBreak: 'break-word',
     };
 
     const roleStyle = {
-        fontSize: '0.9rem',
+        fontSize: '0.85rem',
         color: '#888',
         marginBottom: 16,
+        textTransform: 'capitalize',
     };
 
     const buttonStyle = {
-        alignSelf: 'flex-start',
         backgroundColor: '#e74c3c',
         color: '#fff',
         border: 'none',
@@ -61,18 +61,19 @@ export default function UserCard({ user, onDelete }) {
             onFocus={() => setHover(true)}
             onBlur={() => setHover(false)}
             role="region"
-            aria-label={`User card for ${users.username}`}
+            aria-label={`User card for ${user.username}`}
         >
             <div>
-                <div style={nameStyle}>{users.username}</div>
-                <div style={emailStyle}>{users.email}</div>
-                <div style={roleStyle}>Role: {users.role}</div>
+                <div style={nameStyle}>{user.username}</div>
+                <div style={emailStyle}>{user.email || '无邮箱'}</div>
+                <div style={roleStyle}>{user.role.replace('ROLE_', '')}</div>
             </div>
 
             <button
                 style={buttonStyle}
                 onClick={() => onDelete && onDelete(user.id)}
                 aria-label={`Delete user ${user.username}`}
+                type="button"
             >
                 删除
             </button>

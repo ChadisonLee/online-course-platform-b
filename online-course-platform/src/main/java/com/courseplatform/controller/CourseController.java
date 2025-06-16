@@ -27,17 +27,18 @@ public class CourseController {
     }
 
     /**
-     * 根据ID获取课程详情
+     * 根据ID获取课程信息，包括类型，视频url
      * @param courseId 课程ID
      * @return 课程DTO
      */
+
     @GetMapping("/{courseId}")
-    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long courseId) {
-        CourseDTO course = courseService.getCourseById(courseId);
-        return ResponseEntity.ok(course);
+    public ResponseEntity<CourseDTO> getCourseDetailById(@PathVariable Long courseId) {
+        CourseDTO CourseDetail = courseService.getCourseDetailById(courseId);
+        return ResponseEntity.ok(CourseDetail);
     }
 
-    /**
+    /**添加myCourse
      * 创建新课程
      * @param courseDTO 课程数据传输对象
      * @return 创建后的课程DTO
@@ -48,7 +49,8 @@ public class CourseController {
         return ResponseEntity.ok(createdCourse);
     }
 
-    /**
+
+    /**myCourse功能
      * 更新课程信息
      * @param courseId 课程ID
      * @param courseDTO 更新的课程数据
