@@ -10,13 +10,13 @@ export default function AdminDashboard() {
                     <Link to="/admin/users" className="nav-card" tabIndex={0} aria-label="用户管理">
                         <div className="nav-icon">👥</div>
                         <h2 className="nav-card-title">用户管理</h2>
-                        <p className="nav-card-desc">查看、编辑和删除用户账号</p>
+                        <p className="nav-card-desc">查看 | 删除</p>
                     </Link>
 
                     <Link to="/admin/courses" className="nav-card" tabIndex={0} aria-label="课程管理">
                         <div className="nav-icon">📚</div>
                         <h2 className="nav-card-title">课程管理</h2>
-                        <p className="nav-card-desc">查看、编辑和删除课程信息</p>
+                        <p className="nav-card-desc">查看 | 编辑 | 删除</p>
                     </Link>
 
                     <Link to="/admin/analytics" className="nav-card" tabIndex={0} aria-label="时间管理">

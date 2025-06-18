@@ -52,6 +52,13 @@ export default function UserCard({ user, onDelete }) {
         transition: 'background-color 0.3s ease',
     };
 
+    // 直接在组件内定义删除函数
+    const handleDelete = () => {
+        if (window.confirm(`确定删除用户 "${user.username}" 吗？`)) {
+            onDelete && onDelete(user.id);
+        }
+    };
+
     return (
         <div
             style={cardStyle}
@@ -71,7 +78,7 @@ export default function UserCard({ user, onDelete }) {
 
             <button
                 style={buttonStyle}
-                onClick={() => onDelete && onDelete(user.id)}
+                onClick={handleDelete}
                 aria-label={`Delete user ${user.username}`}
                 type="button"
             >

@@ -73,4 +73,14 @@ public class CourseDTO {
     public void setVideo(List<Map<String, Object>> video) {
         this.video = video;
     }
+
+    private boolean enrolled;
+
+    public boolean isEnrolled() {
+        return enrolled;
+    }
+
+    public void setEnrolled(boolean enrolled) {
+        this.enrolled = enrolled;
+    }
 }

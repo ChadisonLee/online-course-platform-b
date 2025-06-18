@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function CourseCard({ course }) {
+export default function CourseCard({ course, selected = false }) {
     const [hover, setHover] = useState(false);
+
+    const baseShadow = '0 4px 12px rgba(0,0,0,0.1)';
+    const hoverShadow = `0 12px 20px rgba(0,0,0,0.25),
+                         0 24px 48px rgba(0,0,0,0.15),
+                         0 36px 72px rgba(0,0,0,0.1)`;
 
     const cardStyle = {
         backgroundColor: '#fff',
         borderRadius: 16,
         padding: '1.5rem',
-        boxShadow: hover
-            ? `0 12px 20px rgba(0,0,0,0.25),
-               0 24px 48px rgba(0,0,0,0.15),
-               0 36px 72px rgba(0,0,0,0.1)`
-            : '0 4px 12px rgba(0,0,0,0.1)',
-        transform: hover
-            ? 'translateY(-20px)'  // 仅平移悬浮效果，去掉3D旋转
-            : 'none',
+        boxShadow: selected
+            ? '0 0 0 4px #357ae8, 0 8px 24px rgba(53, 122, 232, 0.6)' // 选中蓝色边框和阴影
+            : hover
+                ? hoverShadow
+                : baseShadow,
+        transform: hover ? 'translateY(-20px)' : 'none',
         transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease',
         cursor: 'pointer',
         display: 'flex',
@@ -24,16 +27,17 @@ export default function CourseCard({ course }) {
         minHeight: 200,
         userSelect: 'none',
         willChange: 'transform, box-shadow',
-        border: '1px solid rgba(255, 255, 255, 0.6)',
+        border: selected ? 'none' : '1px solid rgba(255, 255, 255, 0.6)',
         background: hover
             ? 'linear-gradient(145deg, #ffffff, #e6e6e6)'
             : '#fff',
+        outline: selected ? '2px solid #357ae8' : 'none',
     };
 
     const linkStyle = {
         alignSelf: 'flex-start',
         textDecoration: 'none',
-        color: hover ? '#1a5ea8' : '#3498db',
+        color: hover || selected ? '#1a5ea8' : '#3498db',
         fontWeight: '700',
         fontSize: '1rem',
         transition: 'color 0.3s ease',
@@ -67,7 +71,7 @@ export default function CourseCard({ course }) {
             onFocus={() => setHover(true)}
             onBlur={() => setHover(false)}
             role="link"
-            aria-label={`View details for ${course.title}`}
+            aria-label={`View details for ${course.title}${selected ? ', selected' : ''}`}
         >
             <h3 style={titleStyle}>{course.title}</h3>
             <p style={descriptionStyle}>{course.description}</p>

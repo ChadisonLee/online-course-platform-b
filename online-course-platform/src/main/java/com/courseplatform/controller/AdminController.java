@@ -43,6 +43,27 @@ public class AdminController {
     }
 
     /**
+     * 根据课程ID获取课程详情
+     */
+    @GetMapping("/courses/{id}")
+    public ResponseEntity<CourseDTO> getCourseById(@PathVariable Long id) {
+        CourseDTO course = courseService.getCourseDetailById(id);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(course);
+    }
+
+    /**
+     * 获取课程类别ID
+     */
+    @GetMapping("/courses/id")
+    public getCategoryID() {
+
+        return ResponseEntity.ok(course);
+    }
+
+    /**
      * 管理员创建课程
      */
     @PostMapping("/courses")
@@ -51,10 +72,12 @@ public class AdminController {
         return ResponseEntity.ok(createdCourse);
     }
 
+
+
     /**
      * 管理员删除课程
      */
-    @DeleteMapping("/courses/{courseId}")
+    @DeleteMapping("/courses/del{courseId}")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
         courseService.deleteCourse(courseId);
         return ResponseEntity.noContent().build();

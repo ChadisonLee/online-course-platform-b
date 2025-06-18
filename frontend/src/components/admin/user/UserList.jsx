@@ -9,7 +9,11 @@ export default function UserList({ users, onDeleteUser }) {
     return (
         <div style={styles.gridContainer}>
             {users.map(user => (
-                <UserCard key={user.id} user={user} onDelete={onDeleteUser} />
+                <UserCard
+                    key={user.id}
+                    user={user}
+                    onDelete={() => onDeleteUser(user.id)}
+                />
             ))}
         </div>
     );
@@ -18,7 +22,7 @@ export default function UserList({ users, onDeleteUser }) {
 const styles = {
     gridContainer: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: '24px',
         width: '100%',
     },

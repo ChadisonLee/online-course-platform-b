@@ -18,6 +18,7 @@ import UserCourseDetail from './pages/user/CourseDetail';
 
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminCourseManagement from './pages/admin/CourseManagement';
+import AdminCourseEdit from './pages/admin/CourseEdit';
 import AdminUserManagement from './pages/admin/UserManagement';
 import AdminAnalytics from './pages/admin/Analytics';
 
@@ -45,6 +46,7 @@ function App() {
                                 {/* Admin */}
                                 <Route path="/admin" element={<AdminDashboard />} />
                                 <Route path="/admin/courses" element={<AdminCourseManagement />} />
+                                <Route path="/admin/courses/edit" element={<AdminCourseEdit />} />
                                 <Route path="/admin/users" element={<AdminUserManagement />} />
                                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
                             </Routes>

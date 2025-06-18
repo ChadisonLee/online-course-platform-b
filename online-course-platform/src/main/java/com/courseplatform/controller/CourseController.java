@@ -27,15 +27,19 @@ public class CourseController {
     }
 
     /**
-     * 根据ID获取课程信息，包括类型，视频url
+     * 根据ID获取课程信息，包括类型，视频url，订阅信息
      * @param courseId 课程ID
      * @return 课程DTO
      */
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<CourseDTO> getCourseDetailById(@PathVariable Long courseId) {
-        CourseDTO CourseDetail = courseService.getCourseDetailById(courseId);
-        return ResponseEntity.ok(CourseDetail);
+    public ResponseEntity<CourseDTO> getCourseDetailById(
+            @PathVariable Long courseId,
+            @RequestParam Long userId
+    ) {
+        // 调用带用户ID的服务方法，返回包含报名状态的 CourseDTO
+        CourseDTO courseDetail = courseService.getEnrollmentCourse(courseId, userId);
+        return ResponseEntity.ok(courseDetail);
     }
 
     /**添加myCourse
@@ -43,23 +47,22 @@ public class CourseController {
      * @param courseDTO 课程数据传输对象
      * @return 创建后的课程DTO
      */
-    @PostMapping
-    public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
-        CourseDTO createdCourse = courseService.createCourse(courseDTO);
-        return ResponseEntity.ok(createdCourse);
-    }
+//    @PostMapping
+//    public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
+//        CourseDTO createdCourse = courseService.createCourse(courseDTO);
+//        return ResponseEntity.ok(createdCourse);
+//    }
 
 
     /**myCourse功能
      * 更新课程信息
      * @param courseId 课程ID
-     * @param courseDTO 更新的课程数据
      * @return 更新后的课程DTO
      */
-    @PutMapping("/{courseId}")
-    public ResponseEntity<CourseDTO> updateCourse(@PathVariable Long courseId, @Valid @RequestBody CourseDTO courseDTO) {
-        CourseDTO updatedCourse = courseService.updateCourse(courseId, courseDTO);
-        return ResponseEntity.ok(updatedCourse);
+    @PostMapping("/{courseId}/enrollment")
+    public ResponseEntity<CourseDTO> enrollmentCourse(@PathVariable Long courseId, @RequestParam Long userId) {
+        CourseDTO enrollmentCourse = courseService.enrollmentCourse(courseId, userId);
+        return ResponseEntity.ok(enrollmentCourse);
     }
 
     /**
