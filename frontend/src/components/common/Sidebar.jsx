@@ -10,6 +10,7 @@ export default function Sidebar() {
         { path: '/courses', label: 'Courses' },
         { path: '/my-courses', label: 'My Courses' },
         { path: '/profile', label: 'Profile' },
+        { path: '/big-model', label: 'Big Model' },
         { path: '/admin', label: 'Admin Dashboard' },
     ];
 

@@ -15,7 +15,6 @@ public class CourseDTO {
 
     private String description;
 
-    @NotNull(message = "课程分类ID不能为空")
     private Long categoryId;
 
     private String categoryName;

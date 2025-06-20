@@ -3,10 +3,7 @@ package com.courseplatform.service;
 import com.courseplatform.dto.CourseDTO;
 import com.courseplatform.exception.ResourceNotFoundException;
 import com.courseplatform.model.*;
-import com.courseplatform.repository.CategoryRepository;
-import com.courseplatform.repository.CourseRepository;
-import com.courseplatform.repository.EnrollmentRepository;
-import com.courseplatform.repository.UserRepository;
+import com.courseplatform.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +26,9 @@ public class CourseService {
 
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private VideoRepository videoRepository;
 
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
@@ -144,6 +144,19 @@ public class CourseService {
         enrollmentRepository.delete(targetEnrollment);
     }
 
+    /**
+     * 获取所有分类
+     */
+    public List<Map<Long, String>> getAllCategory() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(category -> {
+                    Map<Long, String> map = new HashMap<>();
+                    map.put(category.getId(), category.getName());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
 
     /**
      * admin操作
@@ -155,29 +168,40 @@ public class CourseService {
         course.setTitle(courseDTO.getTitle());
         course.setDescription(courseDTO.getDescription());
 
-        Category category = new Category();
-        category.setName(courseDTO.getCategoryName());
+        String categoryName = courseDTO.getCategoryName();
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    return categoryRepository.save(newCategory);
+                });
+
+        course.setCategory(category);  // 关联课程和分类
 
         Course saved = courseRepository.save(course);
-        Category savedCategory = categoryRepository.save(category);
 
         CourseDTO result = new CourseDTO();
         result.setId(saved.getId());
         result.setTitle(saved.getTitle());
         result.setDescription(saved.getDescription());
-        result.setCategoryName(savedCategory.getName());
+        result.setCategoryName(category.getName());
         return result;
     }
 
-    public CourseDTO updateCourse(Long courseId, CourseDTO courseDTO) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException("课程未找到，ID：" + courseId));
-
-        Category category = categoryRepository.findById(courseDTO.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("分类未找到，ID：" + courseDTO.getCategoryId()));
+    public CourseDTO updateCourse(CourseDTO courseDTO) {
+        Course course = courseRepository.findById(courseDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("课程未找到，ID：" + courseDTO.getId()));
 
         course.setTitle(courseDTO.getTitle());
         course.setDescription(courseDTO.getDescription());
+
+        String categoryName = courseDTO.getCategoryName();
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    return categoryRepository.save(newCategory);
+                });
         course.setCategory(category);
 
         Course updated = courseRepository.save(course);
@@ -189,6 +213,14 @@ public class CourseService {
             throw new ResourceNotFoundException("课程未找到，ID：" + courseId);
         }
         courseRepository.deleteById(courseId);
+    }
+
+    public long getTotalEnrollment() {
+        return enrollmentRepository.countEnrollments();
+    }
+
+    public long getTotalVideo() {
+        return videoRepository.countVideos();
     }
 
     private CourseDTO mapToDTO(Course course) {

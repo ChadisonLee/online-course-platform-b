@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 管理员专用控制器，提供管理用户和课程的接口
@@ -55,24 +56,38 @@ public class AdminController {
     }
 
     /**
-     * 获取课程类别ID
+     * 获取所有分类ID，方便用户选择
      */
-    @GetMapping("/courses/id")
-    public getCategoryID() {
-
-        return ResponseEntity.ok(course);
+    @GetMapping("/courses/category")
+    public ResponseEntity<List<Map<Long, String>>> getAllCategory() {
+        List<Map<Long, String>> category = courseService.getAllCategory();
+        if (category == null || category.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(category);
     }
 
     /**
      * 管理员创建课程
      */
-    @PostMapping("/courses")
+    @PostMapping("/courses/create")
     public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
         CourseDTO createdCourse = courseService.createCourse(courseDTO);
         return ResponseEntity.ok(createdCourse);
     }
 
-
+    /**
+     * 管理员编辑课程
+     */
+    @PutMapping("/courses/edit")
+    public ResponseEntity<CourseDTO> editCourse(@RequestBody @Valid CourseDTO courseDTO) {
+        if (courseDTO.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        System.out.println(courseDTO);
+        CourseDTO updatedCourse = courseService.updateCourse(courseDTO);
+        return ResponseEntity.ok(updatedCourse);
+    }
 
     /**
      * 管理员删除课程
@@ -83,5 +98,21 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    // 你可以根据需要添加更多管理员操作接口
+    /**
+     * 管理员获取订阅数
+     */
+    @GetMapping("/courses/enrollment")
+    public Long getEnrollmentCourse(){
+        return courseService.getTotalEnrollment();
+    }
+
+    /**
+     * 管理员获取课程视频数
+     */
+    @GetMapping("/courses/video")
+    public Long getTotalVideo(){
+        return courseService.getTotalVideo();
+    }
+
+
 }

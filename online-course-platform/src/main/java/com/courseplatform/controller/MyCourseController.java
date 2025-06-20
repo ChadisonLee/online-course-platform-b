@@ -36,9 +36,7 @@ public class MyCourseController {
      * @return 无内容响应
      */
     @DeleteMapping("/cancelEnrollment")
-    public ResponseEntity<Void> cancelEnrollment(
-            @RequestParam Long userId,
-            @RequestParam Long courseId) {
+    public ResponseEntity<Void> cancelEnrollment(@RequestParam Long userId, @RequestParam Long courseId) {
         courseService.cancelEnrollment(userId, courseId);
         return ResponseEntity.noContent().build();
     }

@@ -11,12 +11,20 @@ export default function Profile() {
     const [message, setMessage] = useState(null);
 
     useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+            alert('请先登录');
+            setLoading(null);
+            return;
+        }
         userService.getProfile()
             .then(data => {
                 setProfile(data);
                 setFormData({ username: data.username, id: data.id, email: data.email });
             })
-            .catch(console.error)
+            .catch(err => {
+                console.error('加载用户信息失败:', err);
+            })
             .finally(() => setLoading(false));
     }, []);
 
@@ -70,30 +78,33 @@ export default function Profile() {
                         />
                     </div>
                     <div style={styles.buttonGroup}>
-                        <button type="submit" style={{ ...styles.button, ...styles.saveButton }}>
+                        <button type="submit" style={{...styles.button, ...styles.saveButton}}>
                             Save
                         </button>
                         <button
                             type="button"
                             onClick={() => setEditMode(false)}
-                            style={{ ...styles.button, ...styles.cancelButton }}
+                            style={{...styles.button, ...styles.cancelButton}}
                         >
                             Cancel
                         </button>
                     </div>
                 </form>
             ) : (
-                <div style={styles.profileInfo}>
-                    <p><strong>Username:</strong> {profile.username}</p>
-                    <p><strong>UID:</strong> {profile.id}</p>
-                    <p><strong>Email:</strong> {profile.email}</p>
-                    <button onClick={() => setEditMode(true)} style={styles.editButton}>
-                        Edit Profile
-                    </button>
-                </div>
+                profile ? (
+                    <div style={styles.profileInfo}>
+                        <p><strong>Username:</strong> {profile.username}</p>
+                        <p><strong>UID:</strong> {profile.id}</p>
+                        <p><strong>Email:</strong> {profile.email}</p>
+                        <button onClick={() => setEditMode(true)} style={styles.editButton}>
+                            Edit Profile
+                        </button>
+                    </div>
+                ) : (
+                    <p style={{ textAlign: 'center' }}>未加载到用户信息，请重新登录或刷新页面。</p>
+                )
             )}
-        </div>
-    );
+        </div>);
 }
 
 const styles = {

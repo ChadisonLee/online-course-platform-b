@@ -19,10 +19,10 @@ export default function AdminDashboard() {
                         <p className="nav-card-desc">查看 | 编辑 | 删除</p>
                     </Link>
 
-                    <Link to="/admin/analytics" className="nav-card" tabIndex={0} aria-label="时间管理">
+                    <Link to="/admin/analytics" className="nav-card" tabIndex={0} aria-label="平台数据分析">
                         <div className="nav-icon">📅</div>
-                        <h2 className="nav-card-title">时间管理</h2>
-                        <p className="nav-card-desc">查看课程的时间报告</p>
+                        <h2 className="nav-card-title">平台数据分析</h2>
+                        <p className="nav-card-desc">查看本平台的数据</p>
                     </Link>
                 </div>
             </div>

@@ -57,7 +57,7 @@ export default function CourseManagement() {
             {/* 返回按钮固定在左上角，页面内容外部 */}
             <button
                 style={styles.backButton}
-                onClick={() => navigate(-1)}
+                onClick={() => navigate('/admin')}
                 aria-label="Go back"
                 onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2a75d8'}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = '#357ae8'}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import CourseList from '../../components/course/CourseList';
 import Loading from '../../components/common/Loading';
 import courseService from '../../services/courseService';
-import CourseDetail from "../../components/course/CourseDetail";
 
 export default function MyCourses() {
     const [myCourses, setMyCourses] = useState([]);

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
 import courseService from '../../services/courseService'; // 你需要实现的API调用
-import adminService from '../../services/adminService'; // 获取类别接口
+import adminService, {editCourse} from '../../services/adminService'; // 获取类别接口
 import Loading from '../../components/common/Loading';
 
 export default function CourseEdit() {
-    const { id } = useParams(); // 课程ID，为undefined表示新建
+    const location = useLocation();
+    const id = location.state?.courseId;
     const navigate = useNavigate();
 
-    const [categories, setCategories] = useState([]); // 类别列表
+    const [categories, setCategories] = useState([]);
     const [course, setCourse] = useState({
         title: '',
         description: '',
@@ -22,11 +23,18 @@ export default function CourseEdit() {
     // 加载类别和课程详情
     useEffect(() => {
         Promise.all([
-            adminService.getCategoryID(),
+            adminService.getCategory(),
             id ? adminService.getCourseById(id) : Promise.resolve(null),
         ])
             .then(([cats, courseData]) => {
-                setCategories(cats);
+                // 转换 cats 格式
+                const formattedCategories = cats.map(item => {
+                    const id = Number(Object.keys(item)[0]);
+                    const name = item[id];
+                    return { id, name };
+                });
+
+                setCategories(formattedCategories);
                 if (courseData) {
                     setCourse({
                         title: courseData.title || '',
@@ -49,20 +57,25 @@ export default function CourseEdit() {
     };
 
     const handleSubmit = () => {
-        const categoryName = course.newCategory.trim() || categories.find(c => c.id === course.categoryId)?.name;
+        const categoryIdStr = course.categoryId;
+        const selectedCategory = categories.find(c => c.id === Number(categoryIdStr));
+        const categoryName = course.newCategory.trim() || (selectedCategory?.name);
         if (!categoryName) {
             alert('请选择或输入类别');
             return;
         }
 
         const payload = {
+            id: id,
             title: course.title,
             description: course.description,
-            categoryName,
+            categoryId: categoryIdStr ? Number(categoryIdStr) : null,
+            categoryName: categoryName,
         };
+        console.log('payload', payload);
 
         setSaving(true);
-        const request = id ? courseService.updateCourse(id, payload) : courseService.createCourse(payload);
+        const request = id ? adminService.editCourse(payload) : adminService.createCourse(payload);
 
         request
             .then(() => {
@@ -97,7 +110,7 @@ export default function CourseEdit() {
             <div style={styles.formGroup}>
                 <label style={styles.label}>课程描述</label>
                 <textarea
-                    style={{ ...styles.input, height: 100, resize: 'vertical' }}
+                    style={{...styles.input, height: 100, resize: 'vertical'}}
                     value={course.description}
                     onChange={handleChange}
                     name="description"
@@ -107,28 +120,33 @@ export default function CourseEdit() {
             <div style={styles.formGroup}>
                 <label style={styles.label}>类别</label>
                 <select
-                    style={styles.input}
                     value={course.categoryId}
                     onChange={handleChange}
+                    style={styles.input}
                     name="categoryId"
                 >
-                    <option value="">请选择类别</option>
                     {categories.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
+                        <option key={c.id} value={c.id}>
+                            {c.name}
+                        </option>
                     ))}
+                    <option value="new">+ 新建类别</option>
                 </select>
             </div>
 
-            <div style={styles.formGroup}>
-                <label style={styles.label}>或输入新类别</label>
-                <input
-                    style={styles.input}
-                    placeholder="输入新类别名称"
-                    value={course.newCategory}
-                    onChange={handleChange}
-                    name="newCategory"
-                />
-            </div>
+            {/* 只有当选择了“新建类别”时，显示输入框 */}
+            {course.categoryId === 'new' && (
+                <div style={styles.formGroup}>
+                    <label style={styles.label}>请输入新类别名称</label>
+                    <input
+                        style={styles.input}
+                        placeholder="新类别名称"
+                        value={course.newCategory}
+                        onChange={handleChange}
+                        name="newCategory"
+                    />
+                </div>
+            )}
 
             <div style={styles.buttonGroup}>
                 <button

@@ -41,19 +41,24 @@ export function getCourseById(courseId) {
 export function deleteCourse(courseId) {
     return adminApi.delete(`/courses/del${courseId}`);
 }
-
-export function editCourse(courseId, courseDTO) {
-    return adminApi.post('/courses/edit', courseDTO).then(res => res.data);
-}
-
 export function createCourse(courseDTO) {
-    return adminApi.post('/courses', courseDTO).then(res => res.data);
+    return adminApi.post('/courses/create', courseDTO).then(res => res.data);
+}
+export function editCourse(courseDTO) {
+    return adminApi.put(`/courses/edit`, courseDTO).then(res => res.data);
 }
 
-export function getCategoryID() {
-    return adminApi.get('/courses/id').then(res => res.data);
+export function getCategory() {
+    return adminApi.get('/courses/category').then(res => res.data);
 }
 
+export function getTotalEnrollment() {
+    return adminApi.get('/courses/enrollment').then(res => res.data);
+}
+
+export function getTotalVideo() {
+    return adminApi.get('/courses/video').then(res => res.data);
+}
 // 统一导出，方便整体导入
 export default {
     getAllUsers,
@@ -62,5 +67,7 @@ export default {
     deleteCourse,
     createCourse,
     editCourse,
-    getCategoryID,
+    getCategory,
+    getTotalEnrollment,
+    getTotalVideo,
 };

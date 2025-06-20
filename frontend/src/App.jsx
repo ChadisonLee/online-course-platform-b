@@ -14,6 +14,7 @@ import UserHome from './pages/user/Home';
 import UserCourses from './pages/user/Courses';
 import UserMyCourses from './pages/user/MyCourses';
 import UserProfile from './pages/user/Profile';
+import UserBigModel from './pages/user/BigModel';
 import UserCourseDetail from './pages/user/CourseDetail';
 
 import AdminDashboard from './pages/admin/Dashboard';
@@ -41,6 +42,7 @@ function App() {
                                 <Route path="/courses" element={<UserCourses />} />
                                 <Route path="/my-courses" element={<UserMyCourses />} />
                                 <Route path="/profile" element={<UserProfile />} />
+                                <Route path="/big-model" element={<UserBigModel />} />
                                 <Route path="/courses/:id" element={<UserCourseDetail />} />
 
                                 {/* Admin */}

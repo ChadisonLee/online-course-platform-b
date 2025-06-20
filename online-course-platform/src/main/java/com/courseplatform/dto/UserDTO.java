@@ -1,13 +1,11 @@
 package com.courseplatform.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 public class UserDTO {
 
     private Long id;
 
-    @NotBlank(message = "用户名不能为空")
     private String username;
 
     @Email(message = "邮箱格式不正确")
@@ -15,7 +13,6 @@ public class UserDTO {
 
     private String role;  // 如 ROLE_USER, ROLE_ADMIN 等
 
-    // 新增密码字段（可选），更新时可以传入密码
     private String password;
 
     // Getters 和 Setters

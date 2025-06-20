@@ -33,29 +33,14 @@ public class CourseController {
      */
 
     @GetMapping("/{courseId}")
-    public ResponseEntity<CourseDTO> getCourseDetailById(
-            @PathVariable Long courseId,
-            @RequestParam Long userId
-    ) {
+    public ResponseEntity<CourseDTO> getCourseDetailById(@PathVariable Long courseId, @RequestParam Long userId) {
         // 调用带用户ID的服务方法，返回包含报名状态的 CourseDTO
         CourseDTO courseDetail = courseService.getEnrollmentCourse(courseId, userId);
         return ResponseEntity.ok(courseDetail);
     }
 
-    /**添加myCourse
-     * 创建新课程
-     * @param courseDTO 课程数据传输对象
-     * @return 创建后的课程DTO
-     */
-//    @PostMapping
-//    public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
-//        CourseDTO createdCourse = courseService.createCourse(courseDTO);
-//        return ResponseEntity.ok(createdCourse);
-//    }
-
-
     /**myCourse功能
-     * 更新课程信息
+     * 订阅课程信息
      * @param courseId 课程ID
      * @return 更新后的课程DTO
      */
@@ -65,14 +50,4 @@ public class CourseController {
         return ResponseEntity.ok(enrollmentCourse);
     }
 
-    /**
-     * 删除课程
-     * @param courseId 课程ID
-     * @return 无内容响应
-     */
-    @DeleteMapping("/{courseId}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
-        courseService.deleteCourse(courseId);
-        return ResponseEntity.noContent().build();
-    }
 }
