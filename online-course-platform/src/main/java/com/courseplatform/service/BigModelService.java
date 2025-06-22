@@ -8,6 +8,7 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.courseplatform.factory.BigModelServiceFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -30,83 +31,62 @@ public class BigModelService extends WebSocketListener {
 
     private  static List<RoleContent> historyList=new ArrayList<>(); // 对话历史存储集合
 
-    private String totalAnswer;
+    private static String totalAnswer;
 
-    // 环境治理的重要性  环保  人口老龄化  我爱我的祖国
     private  static  String NewQuestion = "";
 
     private  static final Gson gson = new Gson();
 
-    private CountDownLatch latch;
     // 个性化参数
-    public String userId;
-    public Boolean wsCloseFlag;
+    private Boolean wsCloseFlag;
 
     private OkHttpClient client;
-    private WebSocket webSocket;
-    public volatile boolean connected = false;
+    private static WebSocket webSocket;
 
-    private static Boolean totalFlag=true; // 控制提示用户是否输入
-    // 构造函数
-    @Autowired
-    public BigModelService(@Value("${bigmodel.userId:defaultUser}") String userId,
-                           @Value("${bigmodel.wsCloseFlag:false}") Boolean wsCloseFlag) {
+    private String userId;
+
+    public BigModelService() {
+    }
+
+    public void init(String userId, Boolean wsCloseFlag) {
         this.userId = userId;
         this.wsCloseFlag = wsCloseFlag;
     }
 
-    /**
-     * 建立WebSocket长连接
-     */
-    public synchronized void createWebSocket() throws Exception {
-        if (connected) {
-            return; // 防止重复连接
-        }
-        String authUrl = getAuthUrl(hostUrl, apiKey, apiSecret);
-        OkHttpClient client = new OkHttpClient.Builder().build();
-        String url = authUrl.toString().replace("http://", "ws://").replace("https://", "wss://");
-        Request request = new Request.Builder().url(url).build();
-        webSocket = client.newWebSocket(request, this);
-        System.out.println("WebSocket连接成功");
+    private CountDownLatch latch;
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
     }
+
+    @Autowired
+    private BigModelServiceFactory factory;
 
     /**
      * 发送问题，等待回答
      */
-    public synchronized String askQuestion(String question) throws Exception {
-        if (!connected) {
-            throw new IllegalStateException("WebSocket 尚未连接");
-        }
+    public synchronized String askQuestion(String uid, String question) throws Exception {
 
-        latch = new CountDownLatch(1);
         totalAnswer = "";
 
-        // 发送问题
-        webSocket.send(question);
+        NewQuestion = question;
+        CountDownLatch latch = new CountDownLatch(1);
 
-        // 阻塞等待回答，最长60秒
-        boolean success = latch.await(10, TimeUnit.SECONDS);
-        if (!success) {
+        String authUrl = getAuthUrl(hostUrl, apiKey, apiSecret);
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        String url = authUrl.toString().replace("http://", "ws://").replace("https://", "wss://");
+        Request request = new Request.Builder().url(url).build();
+        BigModelService service = factory.create(uid, false);
+        service.setLatch(latch);  // 传递同步锁
+
+        webSocket = client.newWebSocket(request, service);
+
+        boolean completed = latch.await(10, TimeUnit.SECONDS);
+        if (!completed) {
+            webSocket.cancel();
             throw new RuntimeException("等待回答超时");
         }
 
-        return totalAnswer.toString();
-    }
-
-    /**
-     * 关闭WebSocket连接
-     */
-    public synchronized void destroyWebSocket() {
-        if (webSocket != null) {
-            webSocket.close(1000, "Client close");
-            connected = false;
-            webSocket = null;
-        }
-        if (client != null) {
-            client.dispatcher().executorService().shutdown();
-            client = null;
-        }
-        totalAnswer = ""; // 重置答案缓存
+        return totalAnswer;
     }
 
     private  static boolean canAddHistory(){  // 由于历史记录最大上线1.2W左右，需要判断是能能加入历史
@@ -198,7 +178,6 @@ public class BigModelService extends WebSocketListener {
         System.out.print("大模型：");
         MyThread myThread = new MyThread(webSocket);
         myThread.start();
-        connected = true;  // 连接成功时设置
     }
 
     @Override
@@ -230,9 +209,7 @@ public class BigModelService extends WebSocketListener {
                 historyList.add(roleContent);
             }
             wsCloseFlag = true;
-            totalFlag=true;
-            latch.countDown();         // 释放等待线程
-            webSocket.close(1000, "Normal Closure");
+            latch.countDown();  // 释放等待线程
         }
 
     }

@@ -1,62 +1,97 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {askBigModel, destroyWebSocketConnection, createWebSocketConnection} from "../../services/bigModelService";
+import React, {useEffect, useRef, useState} from 'react';
+import {askBigModelHttp, createBigModelWebSocket} from '../../services/bigModelService';
+
 
 export default function BigModelQA() {
     const [messages, setMessages] = useState([]); // 聊天记录
-    const [input, setInput] = useState('');       // 输入框内容
+    const [input, setInput] = useState('');
+    const [userId, setUserId] = useState(null);
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef(null);
+    const inputRef = useRef(null);
+    const wsRef = useRef(null); // WebSocket实例引用
 
+    // 滚动到底部
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // 初始化 userId，只执行一次
+    useEffect(() => {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) {
+            alert('请先登录');
+            setLoading(false);
+            return;
+        }
+        const user = JSON.parse(userStr);
+        if (!user?.id) {
+            alert('请先登录');
+            setLoading(false);
+            return;
+        }
+        setUserId(user.id);
+    }, []);
+
+    // 建立 WebSocket 连接，只执行一次
+    useEffect(() => {
+        if (!userId) return;
+
+        wsRef.current = createBigModelWebSocket(userId, (data) => {
+            // 消息处理逻辑
+            // 这里假设服务器发回的 data 是字符串消息，也可能是JSON对象
+            if (typeof data === 'string') {
+                setMessages(prev => [...prev, { role: 'assistant', content: data }]);
+            } else if (typeof data === 'object' && data !== null) {
+                setMessages(prev => [...prev, { role: 'assistant', content: data.content || '[无内容]' }]);
+            }
+        });
+
+        return () => {
+            // 组件卸载时关闭 WebSocket
+            wsRef.current?.close();
+        };
+    }, [userId]);
+
+    // 消息更新时滚动到底部 & 输入框聚焦
     useEffect(() => {
         scrollToBottom();
-        // 组件挂载时建立连接
-        createWebSocketConnection()
-            .catch(console.error);
-        // 组件卸载时关闭连接
-        return () => {
-            destroyWebSocketConnection()
-                .catch(console.error);
-        }
+        inputRef.current?.focus();
     }, [messages]);
 
+// 发送问题，获取任务ID
     async function fetchAnswer(question) {
-        return new Promise((resolve) => {
-            setTimeout(async () => {
-                const result = await askBigModel(question.trim());
-                setMessages(result);
-            }, 1200);
-        });
+        try {
+            // 不在这里处理完整回答，由WebSocket监听推送结果
+            return await askBigModelHttp(userId, question.trim());
+        } catch (error) {
+            console.error('提交问题失败:', error);
+            setMessages(prev => [
+                ...prev,
+                { role: 'assistant', content: '抱歉，问题提交失败，请在登录状态下尝试。' },
+            ]);
+            return null;
+        }finally {
+            setLoading(false);  // 任务完成后，无论成功失败，都重置 loading
+        }
     }
 
-    // 处理提交，接收事件并阻止默认行为
-    const handleSubmit = async (e) => {
+    // 处理提交
+    const handleSubmit = async e => {
         e.preventDefault();
         const trimmed = input.trim();
         if (!trimmed) return;
 
-        setMessages((prev) => [...prev, { sender: 'user', text: trimmed }]);
+        setMessages(prev => [...prev, { role: 'user', content: trimmed }]);
         setInput('');
         setLoading(true);
 
-        try {
-            const answer = await fetchAnswer(trimmed);
-            setMessages((prev) => [...prev, { sender: 'assistant', text: answer }]);
-        } catch {
-            setMessages((prev) => [
-                ...prev,
-                { sender: 'assistant', text: '抱歉，回答出现错误，请稍后再试。' },
-            ]);
-        } finally {
-            setLoading(false);
-        }
+        await fetchAnswer(trimmed);
     };
 
-    // 回车提交，Shift+Enter换行
-    const handleKeyDown = (e) => {
+    // 支持回车提交，Shift+Enter换行
+    const handleKeyDown = e => {
+        if (loading) return;
         if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
             e.preventDefault();
             handleSubmit(e);
@@ -67,36 +102,38 @@ export default function BigModelQA() {
         <div style={styles.container}>
             <header style={styles.header}>课程选择助手</header>
             <main style={styles.chatContainer}>
-                {messages.length === 0 && (
-                    <p style={styles.welcome}>请输入您的问题，开始对话吧！😊</p>
-                )}
-                {messages.map((msg, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            ...styles.message,
-                            ...(msg.sender === 'user' ? styles.userMsg : styles.assistantMsg),
-                        }}
-                    >
-                        {msg.text.split('\n').map((line, idx) => (
-                            <p key={idx} style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
-                                {line}
-                            </p>
-                        ))}
-                    </div>
-                ))}
+                {messages.length === 0 && <p style={styles.welcome}>请输入您的问题，开始对话吧！😊</p>}
+                {messages.map((msg, i) => {
+                    const content = msg.content || '';
+                    return (
+                        <div
+                            key={i}
+                            style={{
+                                ...styles.message,
+                                ...(msg.role === 'user' ? styles.userMsg : styles.assistantMsg),
+                            }}
+                        >
+                            {content.split('\n').map((line, idx) => (
+                                <p key={idx} style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
+                                    {line}
+                                </p>
+                            ))}
+                        </div>
+                    );
+                })}
                 <div ref={chatEndRef} />
             </main>
             <form onSubmit={handleSubmit} style={styles.form}>
-                <textarea
-                    style={styles.textarea}
-                    rows={2}
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="请输入您的问题，按回车发送，Shift+Enter换行"
-                    disabled={loading}
-                />
+        <textarea
+            style={styles.textarea}
+            rows={2}
+            value={input}
+            ref={inputRef}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="请输入您的问题，按回车发送，Shift+Enter换行"
+            disabled={loading}
+        />
                 <button type="submit" style={styles.button} disabled={loading || !input.trim()}>
                     {loading ? '生成中...' : '发送'}
                 </button>

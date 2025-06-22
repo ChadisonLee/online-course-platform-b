@@ -17,7 +17,7 @@ server:
   port: 8080
 
 jwt:
-  secretKey: "your-very-long-secret-key-string-at-least-32-chars!"
+  secretKey: "uE7x3ZqN9sVjF1LcPo4KhRwYbTgM8XdA"
   expirationSeconds: 3600
   tokenPrefix: "Bearer "
   header: "Authorization"
@@ -27,3 +27,9 @@ logging:
     root: INFO
     org.hibernate.SQL: DEBUG
     com.courseplatform: DEBUG
+
+
+
+    org:
+      springframework:
+        security=DEBUG:

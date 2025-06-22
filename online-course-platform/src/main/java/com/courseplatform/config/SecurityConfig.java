@@ -50,6 +50,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/ws/bigmodel/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/admin")).hasRole("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/api/admin/**")).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
 

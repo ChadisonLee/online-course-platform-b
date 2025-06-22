@@ -65,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+
     @Autowired
     private JwtConfig jwtConfig;
 }

@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Sidebar() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    const [userRole, setUserRole] = useState(null);
+
+    // 假设从 localStorage 或其他方式获取用户角色
+    useEffect(() => {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                setUserRole(user?.role || null);
+            } catch {
+                setUserRole(null);
+            }
+        }
+    }, []);
 
     const navItems = [
         { path: '/', label: 'Home' },
@@ -11,10 +25,13 @@ export default function Sidebar() {
         { path: '/my-courses', label: 'My Courses' },
         { path: '/profile', label: 'Profile' },
         { path: '/big-model', label: 'Big Model' },
-        { path: '/admin', label: 'Admin Dashboard' },
     ];
 
-    // 切换侧边栏显示状态
+    // 只有管理员角色才显示 Admin Dashboard
+    if (userRole === 'ROLE_ADMIN') {
+        navItems.push({ path: '/admin', label: 'Admin Dashboard' });
+    }
+
     const toggleSidebar = () => setIsOpen(open => !open);
 
     return (

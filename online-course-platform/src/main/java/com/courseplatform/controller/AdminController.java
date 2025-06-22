@@ -6,6 +6,7 @@ import com.courseplatform.service.UserService;
 import com.courseplatform.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")  // 整个类所有方法都需要ADMIN角色
 public class AdminController {
 
     @Autowired

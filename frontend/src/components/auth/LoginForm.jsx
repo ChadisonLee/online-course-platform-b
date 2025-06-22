@@ -1,18 +1,21 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
+import {useLocation, useNavigate} from "react-router-dom";
 
 export default function LoginForm() {
     const { login } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleSubmit = async e => {
         e.preventDefault();
         setError(null);
         try {
             await login(username, password);
-            // 登录成功后可以跳转或其他操作
+            navigate('/');
+            window.location.reload();
         } catch (e) {
             setError('Login failed. Please check your credentials.');
         }
